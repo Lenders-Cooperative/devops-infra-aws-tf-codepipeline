@@ -102,12 +102,22 @@ def lookup_slack_channel(tags):
 def lookup_github_commit_info(full_repo, source_version, aws_status_text):
     message_text = ''
 
+    if source_version.startswith("arn:"):
+        print(f"Source Version is not a SHA: {source_version}")
+        return ''
+
     request_url = 'https://api.github.com/repos/'+ full_repo + '/commits/' + source_version
 
     r = requests.get(request_url, auth=(gh_username, gh_token))
 
     try:
+        # print("Looking up GitHub:")
+        # print(request_url)
+        
         response = json.loads(r.text)
+
+        # print("GitHub Response:")
+        # print(response)
 
         author = response['commit']['author']['email']
         commit_message = response['commit']['message']
@@ -126,7 +136,8 @@ def lookup_github_commit_info(full_repo, source_version, aws_status_text):
                 message_text += f"cc: author is not {slack_email_domain_filter} email\n"
 
     except Exception as e:
-        print('error loading json')
+        response_message = response['message']
+        print(f'error loading json: {response_message}')
         print(e)
     
     return message_text
@@ -292,7 +303,7 @@ def lambda_handler(event, context):
 
     jsonOutput = build_message(payload)
   
-    #print("Sending json to: " + slack_app)
+    # print("Sending json to: " + slack_token)
     # print(jsonOutput)
     
     ##########################################################
@@ -309,6 +320,21 @@ def lambda_handler(event, context):
         json=jsonOutput,
         headers={ "Content-Type": "application/json", "Authorization": "Bearer " + slack_token}
     )
+
+    response_text = json.loads(response.text)
+
+    # print("Slack Response:")
+    # print(response)
+
+    # print("Slack Response Text:")
+    # print(response_text)
+
+    response_status = response_text['ok']
+    if response_status == False:
+        response_error_msg = response_text['error']
+        print(f"Slack error message: {response_error_msg}")
+    else:
+        print(f'Slack message sent successfully')
 
     return {
         'statusCode': 200,
