@@ -99,6 +99,36 @@ def lookup_slack_channel(tags):
 
     return slack_channel
 
+def lookup_branch_names(request_url):
+    message_text = ''
+
+    request_url += '/branches-where-head'
+
+    r = requests.get(request_url, auth=(gh_username, gh_token))
+
+    try:
+        # print("Looking up GitHub Branches:")
+        # print(request_url)
+        
+        response = json.loads(r.text)
+
+        # print("GitHub Branches Response:")
+        # print(response)
+
+        for branch in response:
+            message_text += ', ' 
+            message_text += branch['name'] 
+        
+        message_text = message_text[2:]
+
+    except Exception as e:
+        message_text = '_could not lookup branch info_'
+        response_message = response['message']
+        print(f'error loading json: {response_message}')
+        print(e)
+    
+    return message_text
+
 def lookup_github_commit_info(full_repo, source_version, aws_status_text):
     message_text = ''
 
@@ -126,6 +156,8 @@ def lookup_github_commit_info(full_repo, source_version, aws_status_text):
         message_text = "*Commit ID:* " + source_version + "\n"
         message_text += "*Commit Author:* " + author + "\n"
         message_text += "*Commit Message:* " + commit_message + "\n"
+        message_text += "*Repository:* " + full_repo + "\n"
+        message_text += "*Branch:* " + lookup_branch_names(request_url) + "\n"
 
         # if used a qualified email address, at mention them in slack
         if "FAILED" == aws_status_text:
