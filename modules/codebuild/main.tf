@@ -97,7 +97,7 @@ locals {
 
 resource "aws_iam_role" "default" {
   count                 = var.codebuild_enabled ? 1 : 0
-  name                  = var.name
+  name                  = "${var.name}-${var.aws_region}"
   assume_role_policy    = data.aws_iam_policy_document.role.json
   force_detach_policies = true
   tags                  = var.tags
@@ -122,7 +122,7 @@ data "aws_iam_policy_document" "role" {
 
 resource "aws_iam_policy" "default" {
   count  = var.codebuild_enabled ? 1 : 0
-  name   = var.name
+  name   = "${var.name}-${var.aws_region}"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.combined_permissions.json
 }
@@ -131,7 +131,7 @@ resource "aws_iam_policy" "default_cache_bucket" {
   count = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
 
 
-  name   = "${var.name}-cache-bucket"
+  name   = "${var.name}-${var.aws_region}-cache-bucket"
   path   = "/service-role/"
   policy = join("", data.aws_iam_policy_document.permissions_cache_bucket.*.json)
 }
