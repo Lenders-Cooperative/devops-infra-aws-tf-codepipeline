@@ -546,7 +546,7 @@ resource "aws_codestarnotifications_notification_rule" "codebuild_notification_r
   detail_type    = "FULL"
   event_type_ids = ["codebuild-project-build-state-failed", "codebuild-project-build-state-succeeded"]
 
-  name     = "${var.environment}-bnr-${var.name}"
+  name     = "${var.environment}-bnr-${var.name}-${var.aws_region}"
   resource = aws_codebuild_project.default[count.index].arn
 
   target {
@@ -559,7 +559,7 @@ resource "aws_codestarnotifications_notification_rule" "codepipeline_notificatio
   detail_type    = "FULL"
   event_type_ids = ["codepipeline-pipeline-pipeline-execution-failed", "codepipeline-pipeline-pipeline-execution-canceled", "codepipeline-pipeline-pipeline-execution-started", "codepipeline-pipeline-pipeline-execution-succeeded", "codepipeline-pipeline-pipeline-execution-superseded"]
 
-  name     = "${var.environment}-pnr-${var.name}"
+  name     = "${var.environment}-pnr-${var.name}-${var.aws_region}"
   resource = module.codepipeline[count.index].pipeline_arn
 
   target {
