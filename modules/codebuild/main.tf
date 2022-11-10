@@ -310,7 +310,7 @@ resource "aws_iam_role_policy_attachment" "default_cache_bucket" {
 }
 
 resource "aws_codebuild_webhook" "default" {
-  count        = var.codebuild_enabled && var.webhook_enabled ? 1 : 0
+  count        = var.codebuild_enabled && var.webhook_enabled && (var.aws_region != "us-east-1") ? 1 : 0
   project_name = aws_codebuild_project.default[count.index].name
   build_type   = var.webhook_build_type
   filter_group {
