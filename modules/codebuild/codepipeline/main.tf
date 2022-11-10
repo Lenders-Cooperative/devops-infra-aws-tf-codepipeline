@@ -43,6 +43,24 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
+  dynamic "stage" {
+    for_each = var.aws_region == "us-east-1" ? ["create"] : []
+    content {
+      name = "Approve"
+
+      dynamic "action" {
+        for_each = var.aws_region == "us-east-1" ? ["create"] : []
+        content {
+          name     = "Approval"
+          category = "Approval"
+          owner    = "AWS"
+          provider = "Manual"
+          version  = "1"
+        }
+      }
+    }
+  }
+
   stage {
     name = "Build"
 
