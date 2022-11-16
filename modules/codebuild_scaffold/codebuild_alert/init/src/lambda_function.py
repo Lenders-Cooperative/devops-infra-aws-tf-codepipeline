@@ -5,6 +5,8 @@ import os
 import requests
 import time
 
+runtime_region = os.environ['AWS_REGION']
+
 boto_client_secrets = boto3.client('secretsmanager')
 boto_client_pipeline = boto3.client('codepipeline')
 boto_client_build = boto3.client('codebuild')
@@ -25,6 +27,8 @@ slack_email_domain_filter = secret_value["SLACK_EMAIL_DOMAIN_FILTER"]
 def format_slack_message(slack_channel, aws_type, should_add_color, aws_name, aws_status_text, message_text):
     status_icon = ''
     status_color = ''
+
+    message_text += f"*Region:* {runtime_region}\n"
 
     if should_add_color:
         if "SUCCEEDED" == aws_status_text:
@@ -296,9 +300,14 @@ def build_message_codepipeline(payload):
     response = boto_client_pipeline.list_tags_for_resource(resourceArn=pipeline_arn)
 
     slack_channel = lookup_slack_channel(response['tags'])
-  
+
+    # Add Pipeline Info to the Message (plus some extra space before the commit info)
+    message_text = f"*Pipeline Execution:* {pipeline_execution_id}\n\n"
+
     # Lookup the Commit Info
-    message_text = lookup_codepipeline_payload_sourceversion(pipeline_name, pipeline_execution_id, pipeline_state)
+    message_text += lookup_codepipeline_payload_sourceversion(pipeline_name, pipeline_execution_id, pipeline_state)
+
+    message_text += "\n"
    
     # print("Sending Pipeline Message: " + message_text)
 
