@@ -448,6 +448,15 @@ resource "aws_codebuild_project" "default" {
     }
 
     dynamic "environment_variable" {
+      for_each = signum(length(var.source_version)) == 1 ? [""] : []
+      content {
+        name  = "EXPLICIT_BRANCH_NAME"
+        value = var.source_version
+        type  = "PLAINTEXT"
+      }
+    }
+
+    dynamic "environment_variable" {
       for_each = var.environment_variables
       content {
         name  = environment_variable.value.name
