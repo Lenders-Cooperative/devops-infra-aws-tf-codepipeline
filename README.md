@@ -29,17 +29,17 @@ To resolve these issues, we replced the web hook trigger with [AWS CodePipeline]
 
 For each call to the [codebuild module](modules/codebuild/), an [AWS CodeBuild](https://docs.aws.amazon.com/codebuild/latest/userguide/welcome.html) project will be created and, optionally, added to an [AWS CodePipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/welcome.html) using the same configuration for the source connection.
 
-<div style="width:400px ; height:300px; margin:0 auto">
+<div align="center">
 
-![AWS CodePipeline](docs/AWSCodePipelineScreenshot.png)
+<img src="docs/AWSCodePipelineScreenshot.png" width="400" height="300">
 
 </div>
 
 If the `slack_notification_channel` variable is passed to the [codebuild module](modules/codebuild/), SNS Notifications are set up for the CodeBuild and CodePipeline using the channel as defined in the variable's value. The Slack App's OAuth Token needs to be passed in the `slack_token` variable in the [codebuild_scaffold module](modules/codebuild_scaffold/).
 
-<div style="width:400px ; height:500px; margin:0 auto">
+<div align="center">
 
-![Slack Notifications](docs/SlackScreenshot.png)
+<img src="docs/SlackScreenshot.png" width="325" height="400">
 
 </div>
 
