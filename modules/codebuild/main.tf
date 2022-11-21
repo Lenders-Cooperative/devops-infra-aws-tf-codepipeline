@@ -52,7 +52,8 @@ resource "aws_s3_bucket" "cache_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
-  bucket = aws_s3_bucket.cache_bucket.id
+  count  = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
+  bucket = aws_s3_bucket.cache_bucket[count.index].id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -152,7 +153,7 @@ data "aws_s3_bucket" "secondary_artifact" {
 
 resource "aws_s3_bucket_public_access_block" "secondary_artifact_access" {
   count  = var.codebuild_enabled ? (var.secondary_artifact_location != null ? 1 : 0) : 0
-  bucket = aws_s3_bucket.secondary_artifact[count.index].id
+  bucket = data.aws_s3_bucket.secondary_artifact[count.index].id
 
   block_public_acls       = true
   block_public_policy     = true
