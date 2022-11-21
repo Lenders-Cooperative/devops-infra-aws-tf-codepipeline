@@ -51,6 +51,15 @@ resource "aws_s3_bucket" "cache_bucket" {
   }*/
 }
 
+resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
+  bucket = aws_s3_bucket.cache_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "random_string" "bucket_prefix" {
   count   = var.codebuild_enabled ? 1 : 0
   length  = 12
@@ -139,6 +148,16 @@ resource "aws_iam_policy" "default_cache_bucket" {
 data "aws_s3_bucket" "secondary_artifact" {
   count  = var.codebuild_enabled ? (var.secondary_artifact_location != null ? 1 : 0) : 0
   bucket = var.secondary_artifact_location
+}
+
+resource "aws_s3_bucket_public_access_block" "secondary_artifact_access" {
+  count  = var.codebuild_enabled ? (var.secondary_artifact_location != null ? 1 : 0) : 0
+  bucket = aws_s3_bucket.secondary_artifact[count.index].id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 data "aws_iam_policy_document" "permissions" {
