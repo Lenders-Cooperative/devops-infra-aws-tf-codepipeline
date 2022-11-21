@@ -3,6 +3,7 @@
 <div align="center">
 
 [![GitHub Releases](https://img.shields.io/github/v/release/Lenders-Cooperative/devops-infra-aws-tf-codepipeline?display_name=tag)](https://github.com/Lenders-Cooperative/devops-infra-aws-tf-codepipeline/releases)
+[![TFSec Check](https://github.com/Lenders-Cooperative/devops-infra-aws-tf-codepipeline/actions/workflows/tfsec.yml/badge.svg)](https://github.com/Lenders-Cooperative/devops-infra-aws-tf-codepipeline/actions/workflows/tfsec.yml)
 [![GitHub Issues](https://img.shields.io/github/issues/Lenders-Cooperative/devops-infra-aws-tf-codepipeline)](https://github.com/Lenders-Cooperative/devops-infra-aws-tf-codepipeline/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/Lenders-Cooperative/devops-infra-aws-tf-codepipeline)](https://github.com/Lenders-Cooperative/devops-infra-aws-tf-codepipeline/pulls)
 [![GitHub License](https://img.shields.io/github/license/Lenders-Cooperative/devops-infra-aws-tf-codepipeline)](LICENSE)
