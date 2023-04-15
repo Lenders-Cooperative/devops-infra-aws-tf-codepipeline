@@ -79,6 +79,29 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      # input_artifacts = ["task"]
+      input_artifacts = ["BuildArtifact"]
+      version         = "1"
+
+      configuration = {
+        # ClusterName = "website-lenderscooperative-cluster"
+        # ServiceName = "website-lenderscooperative-ecs-service"
+        # FileName    = "task_definition.json"
+        ClusterName = var.ecs_prod_cluster_name
+        ServiceName = var.ecs_prod_cluster_service
+        FileName    = var.ecs_prod_file_name
+      }
+    }
+  }
 }
 
 resource "aws_iam_policy" "codepipeline-policy" {

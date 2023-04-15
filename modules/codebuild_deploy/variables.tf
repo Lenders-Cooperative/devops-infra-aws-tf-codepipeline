@@ -386,3 +386,8 @@ variable "environment" {
   type        = string
   description = "A descriptive name for the environment for the AWS Account (e.g. central, dev, prod)"
 }
+
+#ECS Prod Variables
+variable "ecs_prod_cluster_name" {}
+variable "ecs_prod_cluster_service" {}
+variable "ecs_prod_file_name" {}

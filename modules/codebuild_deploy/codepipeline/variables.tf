@@ -39,3 +39,8 @@ variable "tags" {
   default     = {}
   description = "Additional tags (e.g. `map('BusinessUnit', 'XYZ')`"
 }
+
+#Prod ECS Variables
+variable "ecs_prod_cluster_name" {}
+variable "ecs_prod_cluster_service" {}
+variable "ecs_prod_file_name" {}
