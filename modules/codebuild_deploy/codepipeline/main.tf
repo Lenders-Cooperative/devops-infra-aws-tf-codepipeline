@@ -56,6 +56,9 @@ resource "aws_codepipeline" "codepipeline" {
           owner    = "AWS"
           provider = "Manual"
           version  = "1"
+          configuration {
+            NotificationArn = "${var.approve_sns_arn}"
+          }
         }
       }
     }
@@ -79,6 +82,24 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+
+  dynamic "stage" {
+    for_each = var.aws_region == "us-east-2" ? ["create"] : []
+    content {
+      name = "Approve"
+
+      dynamic "action" {
+        for_each = var.aws_region == "us-east-2" ? ["create"] : []
+        content {
+          name     = "Approval"
+          category = "Approval"
+          owner    = "AWS"
+          provider = "Manual"
+          version  = "1"
+        }
+      }
+    }
+  }  
 
   stage {
     name = "Deploy"

@@ -391,3 +391,4 @@ variable "environment" {
 variable "ecs_prod_cluster_name" {}
 variable "ecs_prod_cluster_service" {}
 variable "ecs_prod_file_name" {}
+variable "approve_sns_arn" {}
