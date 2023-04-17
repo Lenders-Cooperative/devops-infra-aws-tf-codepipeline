@@ -89,7 +89,7 @@ resource "aws_codepipeline" "codepipeline" {
       owner           = "AWS"
       provider        = "ECS"
       # input_artifacts = ["task"]
-      input_artifacts = ["SourceArtifact"]
+      input_artifacts = ["BuildArtifact"]
       version         = "1"
 
       configuration = {
