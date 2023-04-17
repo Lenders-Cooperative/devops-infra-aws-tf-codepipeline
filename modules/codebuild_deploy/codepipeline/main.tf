@@ -90,7 +90,7 @@ resource "aws_codepipeline" "codepipeline" {
     provider = "Manual"
     version  = "1"
 
-    configuration {
+    configuration = {
       NotificationArn = "${var.approve_sns_arn}"
     }
   }
