@@ -112,9 +112,9 @@ resource "aws_codepipeline" "codepipeline" {
         # ClusterName = "website-lenderscooperative-cluster"
         # ServiceName = "website-lenderscooperative-ecs-service"
         # FileName    = "task_definition.json"
-        ClusterName = var.ecs_prod_cluster_name
-        ServiceName = var.ecs_prod_cluster_service
-        FileName    = var.ecs_prod_file_name
+        ClusterName = var.ecs_cluster_name
+        ServiceName = var.ecs_cluster_service
+        FileName    = var.ecs_file_name
       }
     }
   }

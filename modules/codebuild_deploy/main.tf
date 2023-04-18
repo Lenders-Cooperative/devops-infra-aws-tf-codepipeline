@@ -565,9 +565,9 @@ module "codepipeline" {
   aws_region                 = signum(length(var.aws_region)) == 1 ? var.aws_region : data.aws_region.default.name
   slack_notification_channel = var.slack_notification_channel
   tags                       = var.tags
-  ecs_prod_cluster_name      = var.ecs_prod_cluster_name
-  ecs_prod_cluster_service   = var.ecs_prod_cluster_service
-  ecs_prod_file_name         = var.ecs_prod_file_name
+  ecs_cluster_name           = var.ecs_cluster_name
+  ecs_cluster_service        = var.ecs_cluster_service
+  ecs_file_name              = var.ecs_file_name
   approve_sns_arn            = var.approve_sns_arn
 }
 
