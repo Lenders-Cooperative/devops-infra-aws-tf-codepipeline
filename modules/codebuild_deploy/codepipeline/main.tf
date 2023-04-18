@@ -82,19 +82,26 @@ resource "aws_codepipeline" "codepipeline" {
 
   stage {
   name = "Approve"
+  for_each = var.aws_region == "us-east-2" ? ["create"] : []
+    content {
+      name = "Approve"
 
-  action {
-    name     = "Approval"
-    category = "Approval"
-    owner    = "AWS"
-    provider = "Manual"
-    version  = "1"
+      dynamic "action" {
+        for_each = var.aws_region == "us-east-2" ? ["create"] : []
+        content {
+          name     = "Approval"
+          category = "Approval"
+          owner    = "AWS"
+          provider = "Manual"
+          version  = "1"
 
-    configuration = {
-      NotificationArn = "${var.approve_sns_arn}"
+          configuration = {
+            NotificationArn = "${var.approve_sns_arn}"
+          }
+        }
+      }
     }
   }
-} 
 
   stage {
     name = "Deploy"
