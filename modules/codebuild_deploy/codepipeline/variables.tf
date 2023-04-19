@@ -45,3 +45,4 @@ variable "ecs_cluster_name" {}
 variable "ecs_cluster_service" {}
 variable "ecs_file_name" {}
 variable "approve_sns_arn" {}
+variable "prod_env" {}

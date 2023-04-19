@@ -387,8 +387,9 @@ variable "environment" {
   description = "A descriptive name for the environment for the AWS Account (e.g. central, dev, prod)"
 }
 
-#ECS Prod Variables
+#ECS Prod Variable
 variable "ecs_cluster_name" {}
 variable "ecs_cluster_service" {}
 variable "ecs_file_name" {}
 variable "approve_sns_arn" {}
+variable "prod_env" {}

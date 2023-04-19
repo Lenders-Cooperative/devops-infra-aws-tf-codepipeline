@@ -569,6 +569,7 @@ module "codepipeline" {
   ecs_cluster_service        = var.ecs_cluster_service
   ecs_file_name              = var.ecs_file_name
   approve_sns_arn            = var.approve_sns_arn
+  prod_env                   = var.prod_env
 }
 
 #########################################################################################################################
