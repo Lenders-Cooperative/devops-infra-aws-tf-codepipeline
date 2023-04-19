@@ -80,23 +80,41 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  stage {
-    count = "${var.prod_env}" ? 1 : 0
-    # count = var.prod_env == true ? ["create"] : []
-    name  = "Approve"
+  # stage {
+  #   count = "${var.prod_env}" ? 1 : 0
+  #   # count = var.prod_env == true ? ["create"] : []
+  #   name  = "Approve"
 
-    action {
-      name     = "Approval"
-      category = "Approval"
-      owner    = "AWS"
-      provider = "Manual"
-      version  = "1"
+  #   action {
+  #     name     = "Approval"
+  #     category = "Approval"
+  #     owner    = "AWS"
+  #     provider = "Manual"
+  #     version  = "1"
 
-      configuration = {
-        NotificationArn = "${var.approve_sns_arn}"
+  #     configuration = {
+  #       NotificationArn = "${var.approve_sns_arn}"
+  #     }
+  #   }
+  # }
+
+  dynamic "stage" {
+    for_each  = var.prod_env ? [1] : []
+    content {
+      name = "Approve"
+      action {
+        configuration = {
+          NotificationArn = var.approve_sns_arn
+          # CustomData      = var.approve_comment
+        }
+        name     = "Approval"
+        category = "Approval"
+        owner    = "AWS"
+        provider = "Manual"
+        version  = "1"
       }
     }
-  } 
+  }
 
   stage {
     name = "Deploy"
