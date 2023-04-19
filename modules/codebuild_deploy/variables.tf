@@ -6,7 +6,7 @@ variable "namespace" {
 
 variable "name" {
   type        = string
-  # default     = ""
+  default     = ""
   description = "CodeBuild name"
 }
 
