@@ -1,6 +1,11 @@
 variable "name" {
   type        = string
-  description = "CodePipeline name"
+  description = "Codebuild name"
+}
+
+variable "codePipeline_name" {
+  type        = string
+  description = "Codepipeline name"
 }
 
 variable "source_location_trimmed" {

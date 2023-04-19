@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "codepipeline" {
-  name     = var.name
+  name     = var.codePipeline_name
   role_arn = aws_iam_role.codepipeline-role.arn
 
   tags = merge(
@@ -141,7 +141,7 @@ resource "aws_codepipeline" "codepipeline" {
 }
 
 resource "aws_iam_policy" "codepipeline-policy" {
-  name        = "PipelineRole-${var.aws_region}-${var.name}"
+  name        = "PipelineRole-${var.aws_region}-${var.codePipeline_name}"
   path        = "/service-role/"
   description = "Policy used in trust relationship with CodePipeline"
 
@@ -309,7 +309,7 @@ EOF
 #                                                                              *
 #               PipelineRole-us-east-1-mmw-test-codepipeline3-hotfix-v2459
 resource "aws_iam_role" "codepipeline-role" {
-  name = "PipelineRole-${var.aws_region}-${var.name}"
+  name = "PipelineRole-${var.aws_region}-${var.codePipeline_name}"
   path = "/service-role/"
 
   assume_role_policy = <<EOF

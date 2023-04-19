@@ -10,6 +10,11 @@ variable "name" {
   description = "CodeBuild name"
 }
 
+variable "codePipeline_name" {
+  type        = string
+  description = "Codepipeline Name"
+}
+
 variable "stage" {
   type        = string
   default     = ""
