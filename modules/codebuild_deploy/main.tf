@@ -558,6 +558,7 @@ module "codepipeline" {
   source = "./codepipeline"
 
   codePipeline_name          = var.codePipeline_name
+  name                       = var.name
   source_location_trimmed    = trimsuffix(trimprefix(var.source_location, "https://github.com/"), ".git")
   source_version             = var.source_version
   codestar_connection_arn    = var.codestar_connection_arn
