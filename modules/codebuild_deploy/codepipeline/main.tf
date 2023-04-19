@@ -81,7 +81,9 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "Approve"
+    count = "${var.prod_env}" ? 1 : 0
+    # count = var.prod_env == true ? ["create"] : []
+    name  = "Approve"
 
     action {
       name     = "Approval"
