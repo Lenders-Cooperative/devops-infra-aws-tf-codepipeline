@@ -54,3 +54,4 @@ variable "slack_email_domain_filter" {
   default     = ""
   description = "The email domain of GitHub users to include as an at mention in Slack Messages"
 }
+variable "env" {}

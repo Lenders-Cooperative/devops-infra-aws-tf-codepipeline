@@ -11,7 +11,7 @@ resource "aws_codebuild_source_credential" "authorization" {
   user_name   = var.source_credential_user_name
 }
 resource "aws_s3_bucket" "artifact-store" {
-  bucket        = "codepipeline-${var.aws_region}-${var.aws-acct-id}"
+  bucket        = "codepipeline${var.env}-${var.aws_region}-${var.aws-acct-id}"
   force_destroy = true
 }
 

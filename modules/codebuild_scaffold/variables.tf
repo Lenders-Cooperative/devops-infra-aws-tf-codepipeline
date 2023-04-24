@@ -25,7 +25,6 @@ variable "source_credential_server_type" {
   default     = "GITHUB"
   description = "The source provider used for this project."
 }
-variable "env" {}
 
 variable "source_credential_token" {
   type        = string
