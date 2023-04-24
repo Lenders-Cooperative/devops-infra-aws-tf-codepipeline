@@ -62,6 +62,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
+    count = "${var.prod_env}" ? 0 : 1
     name = "Build"
 
     action {
