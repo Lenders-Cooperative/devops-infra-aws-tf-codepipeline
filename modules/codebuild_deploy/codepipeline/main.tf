@@ -141,25 +141,70 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  stage {
-    name = "Deploy"
+  dynamic "stage" {
+    for_each  = var.prod_env ? [] : [1]
+    content {
+      name = "Approve"
+      action {
+        configuration = {
+          NotificationArn = var.approve_sns_arn
+          # CustomData      = var.approve_comment
+        }
+        name     = "Approval"
+        category = "Approval"
+        owner    = "AWS"
+        provider = "Manual"
+        version  = "1"
+      }
+    }
+  }
 
-    action {
-      name            = "Deploy"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "ECS"
-      # input_artifacts = ["task"]
-      input_artifacts = ["BuildArtifact"]
-      version         = "1"
+  dynamic "stage" {
+    for_each  = var.prod_env ? [1] : [0]
+    content {
+      name = "Deploy"
+      action {
+        name            = "Deploy"
+        category        = "Deploy"
+        owner           = "AWS"
+        provider        = "ECS"
+        # input_artifacts = ["task"]
+        input_artifacts = ["BuildArtifact"]
+        version         = "1"
 
-      configuration = {
-        # ClusterName = "website-lenderscooperative-cluster"
-        # ServiceName = "website-lenderscooperative-ecs-service"
-        # FileName    = "task_definition.json"
-        ClusterName = var.ecs_cluster_name
-        ServiceName = var.ecs_cluster_service
-        FileName    = var.ecs_file_name
+        configuration = {
+          # ClusterName = "website-lenderscooperative-cluster"
+          # ServiceName = "website-lenderscooperative-ecs-service"
+          # FileName    = "task_definition.json"
+          ClusterName = var.ecs_cluster_name
+          ServiceName = var.ecs_cluster_service
+          FileName    = var.ecs_file_name
+        }
+      }
+    }
+  }
+
+  dynamic "stage" {
+    for_each  = var.prod_env ? [] : [1]
+    content {
+      name = "Deploy"
+      action {
+        name            = "Deploy"
+        category        = "Deploy"
+        owner           = "AWS"
+        provider        = "ECS"
+        # input_artifacts = ["task"]
+        input_artifacts = ["SourceArtifact"]
+        version         = "1"
+
+        configuration = {
+          # ClusterName = "website-lenderscooperative-cluster"
+          # ServiceName = "website-lenderscooperative-ecs-service"
+          # FileName    = "task_definition.json"
+          ClusterName = var.ecs_cluster_name
+          ServiceName = var.ecs_cluster_service
+          FileName    = var.ecs_file_name
+        }
       }
     }
   }
