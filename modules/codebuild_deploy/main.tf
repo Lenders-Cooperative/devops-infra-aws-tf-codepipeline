@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "cache_bucket" {
   #bridgecrew:skip=BC_AWS_S3_13:Skipping `Enable S3 Bucket Logging` check until bridgecrew will support dynamic blocks (https://github.com/bridgecrewio/checkov/issues/776).
   #bridgecrew:skip=BC_AWS_S3_14:Skipping `Ensure all data stored in the S3 bucket is securely encrypted at rest` check until bridgecrew will support dynamic blocks (https://github.com/bridgecrewio/checkov/issues/776).
   #bridgecrew:skip=CKV_AWS_52:Skipping `Ensure S3 bucket has MFA delete enabled` due to issue in terraform (https://github.com/hashicorp/terraform-provider-aws/issues/629).
-  count  = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
+  count  = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
   bucket = local.cache_bucket_name_normalised
   #acl           = "private"
   force_destroy = true
@@ -52,7 +52,7 @@ resource "aws_s3_bucket" "cache_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
-  count  = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
+  count  = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
   bucket = aws_s3_bucket.cache_bucket[count.index].id
 
   block_public_acls       = true
@@ -62,7 +62,7 @@ resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
 }
 
 resource "random_string" "bucket_prefix" {
-  count   = var.codebuild_enabled ? 1 : 0
+  count   = var.codebuild_enabled && var.prod_env ? 1 : 0
   length  = 12
   number  = false
   upper   = false
@@ -106,7 +106,7 @@ locals {
 }
 
 resource "aws_iam_role" "default" {
-  count                 = var.codebuild_enabled ? 1 : 0
+  count                 = var.codebuild_enabled && var.prod_env ? 1 : 0
   name                  = "${var.name}-${var.aws_region}"
   assume_role_policy    = data.aws_iam_policy_document.role.json
   force_detach_policies = true
@@ -131,14 +131,14 @@ data "aws_iam_policy_document" "role" {
 }
 
 resource "aws_iam_policy" "default" {
-  count  = var.codebuild_enabled ? 1 : 0
+  count  = var.codebuild_enabled && var.prod_env ? 1 : 0
   name   = "${var.name}-${var.aws_region}"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.combined_permissions.json
 }
 
 resource "aws_iam_policy" "default_cache_bucket" {
-  count = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
+  count = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
 
 
   name   = "${var.name}-${var.aws_region}-cache-bucket"
@@ -152,7 +152,7 @@ data "aws_s3_bucket" "secondary_artifact" {
 }
 
 resource "aws_s3_bucket_public_access_block" "secondary_artifact_access" {
-  count  = var.codebuild_enabled ? (var.secondary_artifact_location != null ? 1 : 0) : 0
+  count  = var.codebuild_enabled && var.prod_env ? (var.secondary_artifact_location != null ? 1 : 0) : 0
   bucket = data.aws_s3_bucket.secondary_artifact[count.index].id
 
   block_public_acls       = true
@@ -318,19 +318,19 @@ data "aws_iam_policy_document" "permissions_cache_bucket" {
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
-  count      = var.codebuild_enabled ? 1 : 0
+  count      = var.codebuild_enabled && var.prod_env ? 1 : 0
   policy_arn = join("", aws_iam_policy.default.*.arn)
   role       = join("", aws_iam_role.default.*.id)
 }
 
 resource "aws_iam_role_policy_attachment" "default_cache_bucket" {
-  count      = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
+  count      = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
   policy_arn = join("", aws_iam_policy.default_cache_bucket.*.arn)
   role       = join("", aws_iam_role.default.*.id)
 }
 
 resource "aws_codebuild_webhook" "default" {
-  count        = var.codebuild_enabled && var.webhook_enabled && (var.aws_region != "us-east-1") ? 1 : 0
+  count        = var.codebuild_enabled && var.prod_env && var.webhook_enabled && (var.aws_region != "us-east-1") ? 1 : 0
   project_name = aws_codebuild_project.default[count.index].name
   build_type   = var.webhook_build_type
   filter_group {
@@ -345,7 +345,7 @@ resource "aws_codebuild_webhook" "default" {
 }
 
 resource "aws_codebuild_project" "default" {
-  count                  = var.codebuild_enabled ? 1 : 0
+  count                  = var.codebuild_enabled && var.prod_env ? 1 : 0
   name                   = var.name
   description            = var.description
   concurrent_build_limit = var.concurrent_build_limit
