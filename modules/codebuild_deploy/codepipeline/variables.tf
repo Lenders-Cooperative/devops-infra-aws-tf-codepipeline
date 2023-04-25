@@ -18,6 +18,8 @@ variable "source_version" {
   description = "A version (i.e. branch name) of the build input to be built for this project. If not specified, the latest version is used."
 }
 
+variable "input_artifacts" {}
+
 variable "codestar_connection_arn" {
   type        = string
   description = "The ARN of the CodeStar connection to GitHUb for use in CodePipeline"

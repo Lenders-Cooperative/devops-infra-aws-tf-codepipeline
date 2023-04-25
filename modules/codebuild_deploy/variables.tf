@@ -369,6 +369,8 @@ variable "artifact_store_id" {
   description = "The name of the S3 bucket to store source artifacts for the pipeline"
 }
 
+variable "input_artifacts" {}
+
 variable "artifact_store_arn" {
   type        = string
   default     = ""

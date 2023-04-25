@@ -571,6 +571,7 @@ module "codepipeline" {
   ecs_file_name              = var.ecs_file_name
   prod_env                   = var.prod_env
   approve_sns_arn            = var.approve_sns_arn
+  input_artifacts            = var.input_artifacts
 }
 
 #########################################################################################################################
