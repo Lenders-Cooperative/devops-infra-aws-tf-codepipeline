@@ -81,11 +81,11 @@ resource "aws_codepipeline" "codepipeline" {
   # }
 
   dynamic "stage" {
-    for_each  = var.prod_env ? [1] : [0]
+    for_each  = var.prod_env ? [1] : []
     content {
       name = "Build"
       dynamic "action" {
-        for_each  = var.prod_env ? [1] : [0]
+        for_each  = var.prod_env ? [1] : []
         content {
           name             = "Build"
           namespace        = "BuildVariables"
