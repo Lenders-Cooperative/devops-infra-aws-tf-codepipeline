@@ -159,52 +159,26 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  dynamic "stage" {
-    for_each  = var.prod_env ? [1] : [0]
-    content {
-      name = "Deploy"
-      action {
-        name            = "Deploy"
-        category        = "Deploy"
-        owner           = "AWS"
-        provider        = "ECS"
-        # input_artifacts = ["task"]
-        input_artifacts = ["BuildArtifact"]
-        version         = "1"
+  stage {
+    name = "Deploy"
 
-        configuration = {
-          # ClusterName = "website-lenderscooperative-cluster"
-          # ServiceName = "website-lenderscooperative-ecs-service"
-          # FileName    = "task_definition.json"
-          ClusterName = var.ecs_cluster_name
-          ServiceName = var.ecs_cluster_service
-          FileName    = var.ecs_file_name
-        }
-      }
-    }
-  }
+    action {
+      name            = "Deploy"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "ECS"
+      # input_artifacts = ["task"]
+      # input_artifacts = ["BuildArtifact"]
+      input_artifacts = var.input_artifacts
+      version         = "1"
 
-  dynamic "stage" {
-    for_each  = var.prod_env ? [] : [1]
-    content {
-      name = "Deploy"
-      action {
-        name            = "Deploy"
-        category        = "Deploy"
-        owner           = "AWS"
-        provider        = "ECS"
-        # input_artifacts = ["task"]
-        input_artifacts = ["SourceArtifact"]
-        version         = "1"
-
-        configuration = {
-          # ClusterName = "website-lenderscooperative-cluster"
-          # ServiceName = "website-lenderscooperative-ecs-service"
-          # FileName    = "task_definition.json"
-          ClusterName = var.ecs_cluster_name
-          ServiceName = var.ecs_cluster_service
-          FileName    = var.ecs_file_name
-        }
+      configuration = {
+        # ClusterName = "website-lenderscooperative-cluster"
+        # ServiceName = "website-lenderscooperative-ecs-service"
+        # FileName    = "task_definition.json"
+        ClusterName = var.ecs_cluster_name
+        ServiceName = var.ecs_cluster_service
+        FileName    = var.ecs_file_name
       }
     }
   }
