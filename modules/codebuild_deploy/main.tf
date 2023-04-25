@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "cache_bucket" {
   #bridgecrew:skip=BC_AWS_S3_13:Skipping `Enable S3 Bucket Logging` check until bridgecrew will support dynamic blocks (https://github.com/bridgecrewio/checkov/issues/776).
   #bridgecrew:skip=BC_AWS_S3_14:Skipping `Ensure all data stored in the S3 bucket is securely encrypted at rest` check until bridgecrew will support dynamic blocks (https://github.com/bridgecrewio/checkov/issues/776).
   #bridgecrew:skip=CKV_AWS_52:Skipping `Ensure S3 bucket has MFA delete enabled` due to issue in terraform (https://github.com/hashicorp/terraform-provider-aws/issues/629).
-  count  = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
+  count  = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
   bucket = local.cache_bucket_name_normalised
   #acl           = "private"
   force_destroy = true
@@ -52,7 +52,7 @@ resource "aws_s3_bucket" "cache_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
-  count  = var.codebuild_enabled && local.s3_cache_enabled && var.prod_env ? 1 : 0
+  count  = var.codebuild_enabled && local.s3_cache_enabled ? 1 : 0
   bucket = aws_s3_bucket.cache_bucket[count.index].id
 
   block_public_acls       = true
@@ -62,7 +62,7 @@ resource "aws_s3_bucket_public_access_block" "cache_bucket_access" {
 }
 
 resource "random_string" "bucket_prefix" {
-  count   = var.codebuild_enabled && var.prod_env ? 1 : 0
+  count   = var.codebuild_enabled ? 1 : 0
   length  = 12
   number  = false
   upper   = false
@@ -152,7 +152,7 @@ data "aws_s3_bucket" "secondary_artifact" {
 }
 
 resource "aws_s3_bucket_public_access_block" "secondary_artifact_access" {
-  count  = var.codebuild_enabled && var.prod_env ? (var.secondary_artifact_location != null ? 1 : 0) : 0
+  count  = var.codebuild_enabled ? (var.secondary_artifact_location != null ? 1 : 0) : 0
   bucket = data.aws_s3_bucket.secondary_artifact[count.index].id
 
   block_public_acls       = true
