@@ -84,18 +84,22 @@ resource "aws_codepipeline" "codepipeline" {
     for_each  = var.prod_env ? [1] : [0]
     content {
       name = "Build"
-      action {
-        name             = "Build"
-        namespace        = "BuildVariables"
-        category         = "Build"
-        owner            = "AWS"
-        provider         = "CodeBuild"
-        input_artifacts  = ["SourceArtifact"]
-        output_artifacts = ["BuildArtifact"]
-        version          = "1"
+      dynamic "action" {
+        for_each  = var.prod_env ? [1] : [0]
+        content {
+          name             = "Build"
+          namespace        = "BuildVariables"
+          category         = "Build"
+          owner            = "AWS"
+          provider         = "CodeBuild"
+          input_artifacts  = ["SourceArtifact"]
+          output_artifacts = ["BuildArtifact"]
+          version          = "1"
 
-        configuration = {
-          ProjectName = var.name
+          configuration = {
+            ProjectName = var.name
+          }
+
         }
       }
     }
