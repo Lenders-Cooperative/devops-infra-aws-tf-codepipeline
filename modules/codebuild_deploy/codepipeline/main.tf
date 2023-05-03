@@ -1,4 +1,5 @@
 resource "aws_codepipeline" "codepipeline" {
+  count    = var.prod_env ? 1 : 0
   name     = var.codePipeline_name
   role_arn = aws_iam_role.codepipeline-role.arn
 
@@ -61,103 +62,85 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  # stage {
-  #   name = "Build"
+  stage {
+    name = "Build"
 
-  #   action {
-  #     name             = "Build"
-  #     namespace        = "BuildVariables"
-  #     category         = "Build"
-  #     owner            = "AWS"
-  #     provider         = "CodeBuild"
-  #     input_artifacts  = ["SourceArtifact"]
-  #     output_artifacts = ["BuildArtifact"]
-  #     version          = "1"
+    action {
+      name             = "Build"
+      namespace        = "BuildVariables"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["SourceArtifact"]
+      output_artifacts = ["BuildArtifact"]
+      version          = "1"
 
-  #     configuration = {
-  #       ProjectName = var.name
+      configuration = {
+        ProjectName = var.name
+      }
+    }
+  }
+
+  # dynamic "stage" {
+  #   for_each  = var.prod_env ? [1] : []
+  #   content {
+  #     name = "Build"
+  #     dynamic "action" {
+  #       for_each  = var.prod_env ? [1] : []
+  #       content {
+  #         name             = "Build"
+  #         namespace        = "BuildVariables"
+  #         category         = "Build"
+  #         owner            = "AWS"
+  #         provider         = "CodeBuild"
+  #         input_artifacts  = ["SourceArtifact"]
+  #         output_artifacts = ["BuildArtifact"]
+  #         version          = "1"
+
+  #         configuration = {
+  #           ProjectName = var.name
+  #         }
+
+  #       }
   #     }
   #   }
   # }
 
-  dynamic "stage" {
-    for_each  = var.prod_env ? [1] : []
-    content {
-      name = "Build"
-      dynamic "action" {
-        for_each  = var.prod_env ? [1] : []
-        content {
-          name             = "Build"
-          namespace        = "BuildVariables"
-          category         = "Build"
-          owner            = "AWS"
-          provider         = "CodeBuild"
-          input_artifacts  = ["SourceArtifact"]
-          output_artifacts = ["BuildArtifact"]
-          version          = "1"
-
-          configuration = {
-            ProjectName = var.name
-          }
-
-        }
-      }
-    }
-  }
-
-  # stage {
-  #   count = "${var.prod_env}" ? 1 : 0
-  #   # count = var.prod_env == true ? ["create"] : []
-  #   name  = "Approve"
-
-  #   action {
-  #     name     = "Approval"
-  #     category = "Approval"
-  #     owner    = "AWS"
-  #     provider = "Manual"
-  #     version  = "1"
-
-  #     configuration = {
-  #       NotificationArn = "${var.approve_sns_arn}"
+  # dynamic "stage" {
+  #   for_each  = var.prod_env ? [1] : []
+  #   content {
+  #     name = "Approve"
+  #     action {
+  #       configuration = {
+  #         NotificationArn = var.approve_sns_arn
+  #         # CustomData      = var.approve_comment
+  #       }
+  #       name     = "Approval"
+  #       category = "Approval"
+  #       owner    = "AWS"
+  #       provider = "Manual"
+  #       version  = "1"
   #     }
   #   }
   # }
 
-  dynamic "stage" {
-    for_each  = var.prod_env ? [1] : []
-    content {
-      name = "Approve"
-      action {
-        configuration = {
-          NotificationArn = var.approve_sns_arn
-          # CustomData      = var.approve_comment
-        }
-        name     = "Approval"
-        category = "Approval"
-        owner    = "AWS"
-        provider = "Manual"
-        version  = "1"
-      }
-    }
-  }
-
-  dynamic "stage" {
-    for_each  = var.prod_env ? [] : [1]
-    content {
-      name = "Approve"
-      action {
-        configuration = {
-          NotificationArn = var.approve_sns_arn
-          # CustomData      = var.approve_comment
-        }
-        name     = "Approval"
-        category = "Approval"
-        owner    = "AWS"
-        provider = "Manual"
-        version  = "1"
-      }
-    }
-  }
+  # dynamic "stage" {
+  #   for_each  = var.prod_env ? [] : [1]
+  #   content {
+  #     name = "Approve"
+  #     action {
+  #       configuration = {
+  #         NotificationArn = var.approve_sns_arn
+  #         # CustomData      = var.approve_comment
+  #       }
+  #       name     = "Approval"
+  #       category = "Approval"
+  #       owner    = "AWS"
+  #       provider = "Manual"
+  #       version  = "1"
+  #     }
+  #   }
+  # }
 
   stage {
     name = "Deploy"
