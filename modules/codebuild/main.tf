@@ -189,7 +189,9 @@ data "aws_iam_policy_document" "permissions" {
       "codebuild:BatchPutTestCases",
       "codebuild:BatchPutCodeCoverages",
       "ecr:BatchGetImage",
-      "ecr:DescribeImages"
+      "ecr:DescribeImages",
+      "s3:GetObject",
+      "s3:GetBucketAcl"
     ], var.extra_permissions))
 
     effect = "Allow"
