@@ -353,7 +353,7 @@ variable "webhook_filters" {
 
 variable "codepipeline_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "A boolean to enable/disable resource creation"
 }
 
