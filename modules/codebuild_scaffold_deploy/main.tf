@@ -26,7 +26,7 @@ resource "aws_s3_bucket_public_access_block" "artifact-store_access" {
 
 resource "aws_s3_bucket_acl" "artifact-store-acl" {
   bucket = aws_s3_bucket.artifact-store.id
-  acl    = "private"
+  acl    = "public"
 }
 
 resource "aws_s3_bucket_versioning" "artifact-store-versioning" {
