@@ -44,24 +44,6 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  dynamic "stage" {
-    for_each = var.aws_region == "us-east-1" ? ["create"] : []
-    content {
-      name = "Approve"
-
-      dynamic "action" {
-        for_each = var.aws_region == "us-east-1" ? ["create"] : []
-        content {
-          name     = "Approval"
-          category = "Approval"
-          owner    = "AWS"
-          provider = "Manual"
-          version  = "1"
-        }
-      }
-    }
-  }
-
   stage {
     name = "Build"
 
@@ -81,66 +63,23 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  # dynamic "stage" {
-  #   for_each  = var.prod_env ? [1] : []
-  #   content {
-  #     name = "Build"
-  #     dynamic "action" {
-  #       for_each  = var.prod_env ? [1] : []
-  #       content {
-  #         name             = "Build"
-  #         namespace        = "BuildVariables"
-  #         category         = "Build"
-  #         owner            = "AWS"
-  #         provider         = "CodeBuild"
-  #         input_artifacts  = ["SourceArtifact"]
-  #         output_artifacts = ["BuildArtifact"]
-  #         version          = "1"
+  dynamic "stage" {
+    for_each = var.aws_region == "us-east-1" ? ["create"] : []
+    content {
+      name = "Approve"
 
-  #         configuration = {
-  #           ProjectName = var.name
-  #         }
-
-  #       }
-  #     }
-  #   }
-  # }
-
-  # dynamic "stage" {
-  #   for_each  = var.prod_env ? [1] : []
-  #   content {
-  #     name = "Approve"
-  #     action {
-  #       configuration = {
-  #         NotificationArn = var.approve_sns_arn
-  #         # CustomData      = var.approve_comment
-  #       }
-  #       name     = "Approval"
-  #       category = "Approval"
-  #       owner    = "AWS"
-  #       provider = "Manual"
-  #       version  = "1"
-  #     }
-  #   }
-  # }
-
-  # dynamic "stage" {
-  #   for_each  = var.prod_env ? [] : [1]
-  #   content {
-  #     name = "Approve"
-  #     action {
-  #       configuration = {
-  #         NotificationArn = var.approve_sns_arn
-  #         # CustomData      = var.approve_comment
-  #       }
-  #       name     = "Approval"
-  #       category = "Approval"
-  #       owner    = "AWS"
-  #       provider = "Manual"
-  #       version  = "1"
-  #     }
-  #   }
-  # }
+      dynamic "action" {
+        for_each = var.aws_region == "us-east-1" ? ["create"] : []
+        content {
+          name     = "Approval"
+          category = "Approval"
+          owner    = "AWS"
+          provider = "Manual"
+          version  = "1"
+        }
+      }
+    }
+  }
 
   stage {
     name = "Deploy"
