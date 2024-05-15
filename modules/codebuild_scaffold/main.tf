@@ -49,14 +49,15 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "artifact-store-ss
 
 #Adding the alert lambda
 module "codebuild-notification" {
-  source                      = "./codebuild_alert"
-  environment                 = var.environment
-  aws_region                  = var.aws_region
-  aws-acct-id                 = var.aws-acct-id
-  source_credential_user_name = var.source_credential_user_name
-  source_credential_token     = var.source_credential_token
-  slack_token                 = var.slack_token
-  slack_email_domain_filter   = var.slack_email_domain_filter
+  source                                = "./codebuild_alert"
+  environment                           = var.environment
+  aws_region                            = var.aws_region
+  aws-acct-id                           = var.aws-acct-id
+  source_credential_user_name           = var.source_credential_user_name
+  source_credential_token               = var.source_credential_token
+  slack_token                           = var.slack_token
+  slack_email_domain_filter             = var.slack_email_domain_filter
+  slack_default_notification_recipients = var.slack_default_notification_recipients
 }
 
 ##################################################################################
