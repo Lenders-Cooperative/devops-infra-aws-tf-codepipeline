@@ -223,7 +223,8 @@ resource "aws_lambda_function" "project-notification" {
 
   environment {
     variables = {
-      SECRETS_ARN = "${aws_secretsmanager_secret.lambda_secret.arn}"
+      SECRETS_ARN                           = "${aws_secretsmanager_secret.lambda_secret.arn}",
+      SLACK_DEFAULT_NOTIFICATION_RECIPIENTS = jsonencode(var.slack_default_notification_recipients)
     }
   }
 }

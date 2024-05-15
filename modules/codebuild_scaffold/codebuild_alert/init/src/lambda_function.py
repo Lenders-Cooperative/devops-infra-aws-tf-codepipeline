@@ -19,6 +19,7 @@ gh_token = secret_value['GH_TOKEN']
 # slack_app = secret_value["SLACK_URL"]
 slack_token = secret_value["SLACK_TOKEN"]
 slack_email_domain_filter = secret_value["SLACK_EMAIL_DOMAIN_FILTER"]
+slack_default_notfication_recipients = json.loads(os.environ['SLACK_DEFAULT_NOTIFICATION_RECIPIENTS'])
 
 #################################################################################################
 #     Slack Message Text
@@ -167,7 +168,10 @@ def lookup_github_commit_info(full_repo, source_version, aws_status_text):
         if "FAILED" == aws_status_text:
             if author.endswith(f"@{slack_email_domain_filter}"):
                 cc = author.replace(f"@{slack_email_domain_filter}","")
-                message_text += f"cc: @{cc}\n"
+                message_text += f"cc: @{cc} "
+                for default_notification_recipient in slack_default_notfication_recipients:
+                    message_text += f"@{default_notification_recipient} "
+                message_text += '\n'
             else:
                 message_text += f"cc: author is not {slack_email_domain_filter} email\n"
 
