@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "codepipeline" {
-  count    = var.prod_env ? 1 : 0
+  count    = var.prod_env || var.beta_env ? 1 : 0
   name     = var.codePipeline_name
   role_arn = aws_iam_role.codepipeline-role.arn
 
