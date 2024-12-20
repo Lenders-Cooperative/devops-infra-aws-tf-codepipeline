@@ -106,7 +106,7 @@ locals {
 }
 
 resource "aws_iam_role" "default" {
-  count                 = var.codebuild_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count                 = var.codebuild_enabled && var.beta_env ? 1 : 0
   name                  = "${var.name}-${var.aws_region}"
   assume_role_policy    = data.aws_iam_policy_document.role.json
   force_detach_policies = true
@@ -131,14 +131,14 @@ data "aws_iam_policy_document" "role" {
 }
 
 resource "aws_iam_policy" "default" {
-  count  = var.codebuild_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count  = var.codebuild_enabled && var.beta_env ? 1 : 0
   name   = "${var.name}-${var.aws_region}"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.combined_permissions.json
 }
 
 resource "aws_iam_policy" "default_cache_bucket" {
-  count = var.codebuild_enabled && local.s3_cache_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count = var.codebuild_enabled && local.s3_cache_enabled && var.beta_env ? 1 : 0
 
 
   name   = "${var.name}-${var.aws_region}-cache-bucket"
@@ -318,19 +318,19 @@ data "aws_iam_policy_document" "permissions_cache_bucket" {
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
-  count      = var.codebuild_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count      = var.codebuild_enabled && var.beta_env ? 1 : 0
   policy_arn = join("", aws_iam_policy.default.*.arn)
   role       = join("", aws_iam_role.default.*.id)
 }
 
 resource "aws_iam_role_policy_attachment" "default_cache_bucket" {
-  count      = var.codebuild_enabled && local.s3_cache_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count      = var.codebuild_enabled && local.s3_cache_enabled && var.beta_env ? 1 : 0
   policy_arn = join("", aws_iam_policy.default_cache_bucket.*.arn)
   role       = join("", aws_iam_role.default.*.id)
 }
 
 resource "aws_codebuild_webhook" "default" {
-  count        = var.codebuild_enabled && (var.prod_env || var.beta_env) && var.webhook_enabled && (var.aws_region != "us-east-1") ? 1 : 0
+  count        = var.codebuild_enabled && var.beta_env && var.webhook_enabled && (var.aws_region != "us-east-1") ? 1 : 0
   project_name = aws_codebuild_project.default[count.index].name
   build_type   = var.webhook_build_type
   filter_group {
@@ -345,7 +345,7 @@ resource "aws_codebuild_webhook" "default" {
 }
 
 resource "aws_codebuild_project" "default" {
-  count                  = var.codebuild_enabled && (var.prod_env || var.beta_env) ? 1 : 0
+  count                  = var.codebuild_enabled && var.beta_env ? 1 : 0
   name                   = var.name
   description            = var.description
   concurrent_build_limit = var.concurrent_build_limit
