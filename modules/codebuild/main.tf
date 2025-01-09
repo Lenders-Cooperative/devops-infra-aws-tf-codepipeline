@@ -567,6 +567,7 @@ module "codepipeline" {
   aws_region                 = signum(length(var.aws_region)) == 1 ? var.aws_region : data.aws_region.default.name
   slack_notification_channel = var.slack_notification_channel
   tags                       = var.tags
+  outputartifactformat       = var.outputartifactformat
 }
 
 #########################################################################################################################

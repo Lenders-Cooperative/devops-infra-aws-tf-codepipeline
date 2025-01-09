@@ -39,3 +39,9 @@ variable "tags" {
   default     = {}
   description = "Additional tags (e.g. `map('BusinessUnit', 'XYZ')`"
 }
+
+variable "outputartifactformat" {
+  type        = string
+  default     = "CODE_ZIP"
+  description = "Output Artifact Format Type"
+}
