@@ -386,3 +386,9 @@ variable "environment" {
   type        = string
   description = "A descriptive name for the environment for the AWS Account (e.g. central, dev, prod)"
 }
+
+variable "outputartifactformat" {
+  type        = string
+  default     = "CODE_ZIP"
+  description = "Output Artifact Format Type"
+}

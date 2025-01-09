@@ -37,7 +37,7 @@ resource "aws_codepipeline" "codepipeline" {
         ConnectionArn        = var.codestar_connection_arn
         FullRepositoryId     = var.source_location_trimmed
         BranchName           = var.source_version
-        OutputArtifactFormat = "CODE_ZIP"
+        OutputArtifactFormat = var.outputartifactformat
         DetectChanges        = "true"
       }
     }
