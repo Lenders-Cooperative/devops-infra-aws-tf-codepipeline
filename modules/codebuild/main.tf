@@ -188,6 +188,7 @@ data "aws_iam_policy_document" "permissions" {
       "codebuild:UpdateReport",
       "codebuild:BatchPutTestCases",
       "codebuild:BatchPutCodeCoverages",
+      "codestar-connections:UseConnection",
       "ecr:BatchGetImage",
       "ecr:DescribeImages",
       "s3:GetObject",
