@@ -165,15 +165,19 @@ def lookup_github_commit_info(full_repo, source_version, aws_status_text):
         message_text += "*Branch:* " + lookup_branch_names(request_url) + "\n"
 
         # if used a qualified email address, at mention them in slack
+
         if "FAILED" == aws_status_text:
             if author.endswith(f"@{slack_email_domain_filter}"):
-                cc = author.replace(f"@{slack_email_domain_filter}","")
-                message_text += f"cc: @{cc} "
-                for default_notification_recipient in slack_default_notfication_recipients:
-                    message_text += f"@{default_notification_recipient} "
-                message_text += '\n'
+                cc = author.replace(f"@{slack_email_domain_filter}", "")
+                message_text += f":mega: Build failed due to the last commit by @{cc}. Please check and fix the code.\n"
             else:
-                message_text += f"cc: author is not {slack_email_domain_filter} email\n"
+                message_text += f"Build failed. Author is not from the {slack_email_domain_filter} domain.\n"
+
+            # Always CC the default recipients
+            message_text += "cc: "
+            for default_notification_recipient in slack_default_notfication_recipients:
+                message_text += f"@{default_notification_recipient} "
+            message_text += '\n'
 
     except Exception as e:
         response_message = response['message']
