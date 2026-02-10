@@ -382,6 +382,12 @@ variable "slack_notification_channel" {
   description = "Slack Channel Name to tag CodeBuild or CodePipeline and send build event notification messages"
 }
 
+variable "cron_schedule" {
+  type        = string
+  default     = ""
+  description = "EventBridge cron schedule expression to trigger the CodeBuild project (e.g., 'cron(0 12 * * ? *)' for daily at 12:00 UTC). Leave empty to disable scheduled triggers."
+}
+
 variable "environment" {
   type        = string
   description = "A descriptive name for the environment for the AWS Account (e.g. central, dev, prod)"

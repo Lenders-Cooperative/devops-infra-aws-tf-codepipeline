@@ -190,6 +190,7 @@ data "aws_iam_policy_document" "permissions" {
       "codebuild:BatchPutCodeCoverages",
       "codestar-connections:UseConnection",
       "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer",
       "ecr:DescribeImages",
       "s3:GetObject",
       "s3:GetBucketAcl"
@@ -598,4 +599,63 @@ resource "aws_codestarnotifications_notification_rule" "codepipeline_notificatio
   target {
     address = var.slack_notification_sns_topic_arn
   }
+}
+
+#########################################################################################################################
+#         EventBridge Scheduled Trigger
+#########################################################################################################################
+resource "aws_iam_role" "eventbridge_codebuild_schedule" {
+  count = var.codebuild_enabled && var.cron_schedule != "" ? 1 : 0
+  name  = "cbschedule-${substr(var.name, 0, 48)}-${substr(md5(var.name), 0, 8)}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy" "eventbridge_codebuild_schedule" {
+  count = var.codebuild_enabled && var.cron_schedule != "" ? 1 : 0
+  name  = "cbschedule-${substr(var.name, 0, 48)}-${substr(md5(var.name), 0, 8)}"
+  role  = aws_iam_role.eventbridge_codebuild_schedule[0].id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "codebuild:StartBuild"
+        ]
+        Resource = aws_codebuild_project.default[0].arn
+      }
+    ]
+  })
+}
+
+resource "aws_cloudwatch_event_rule" "codebuild_schedule" {
+  count               = var.codebuild_enabled && var.cron_schedule != "" ? 1 : 0
+  name                = "cbschedule-${substr(var.name, 0, 48)}-${substr(md5(var.name), 0, 8)}"
+  description         = "Scheduled trigger for CodeBuild project ${var.name}"
+  schedule_expression = var.cron_schedule
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_event_target" "codebuild_schedule" {
+  count     = var.codebuild_enabled && var.cron_schedule != "" ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.codebuild_schedule[0].name
+  target_id = "cbschedule-${substr(var.name, 0, 48)}-${substr(md5(var.name), 0, 8)}"
+  arn       = aws_codebuild_project.default[0].arn
+  role_arn  = aws_iam_role.eventbridge_codebuild_schedule[0].arn
 }
