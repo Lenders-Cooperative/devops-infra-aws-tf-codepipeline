@@ -211,34 +211,34 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/init/target/deploy.zip"
 }
 
-resource "aws_lambda_function" "project-notification" {
-  filename         = "${path.module}/init/target/deploy.zip"
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  description      = "${var.environment} function to alert to slack"
-  function_name    = "codebuild-alerts-${var.environment}-${var.aws_region}"
-  role             = module.lambda-role.role_arn
-  handler          = "lambda_function.lambda_handler"
-  runtime          = "python3.9"
-  timeout          = 120
+#resource "aws_lambda_function" "project-notification" {
+#  filename         = "${path.module}/init/target/deploy.zip"
+#  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+#  description      = "${var.environment} function to alert to slack"
+#  function_name    = "codebuild-alerts-${var.environment}-${var.aws_region}"
+#  role             = module.lambda-role.role_arn
+#  handler          = "lambda_function.lambda_handler"
+#  runtime          = "python3.9"
+#  timeout          = 120
 
-  environment {
-    variables = {
-      SECRETS_ARN                           = "${aws_secretsmanager_secret.lambda_secret.arn}",
-      SLACK_DEFAULT_NOTIFICATION_RECIPIENTS = jsonencode(var.slack_default_notification_recipients)
-    }
-  }
-}
+#  environment {
+#    variables = {
+#      SECRETS_ARN                           = "${aws_secretsmanager_secret.lambda_secret.arn}",
+#      SLACK_DEFAULT_NOTIFICATION_RECIPIENTS = jsonencode(var.slack_default_notification_recipients)
+#    }
+#  }
+#}
 
-resource "aws_sns_topic_subscription" "project-notification" {
-  topic_arn = aws_sns_topic.sns.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_function.project-notification.arn
-}
+#resource "aws_sns_topic_subscription" "project-notification" {
+ # topic_arn = aws_sns_topic.sns.arn
+ # protocol  = "lambda"
+ # endpoint  = aws_lambda_function.project-notification.arn
+#}
 
-resource "aws_lambda_permission" "project-notification" {
-  statement_id  = "AllowExecutionFromSNS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.project-notification.function_name
-  principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.sns.arn
-}
+#resource "aws_lambda_permission" "project-notification" {
+ # statement_id  = "AllowExecutionFromSNS"
+ # action        = "lambda:InvokeFunction"
+ # function_name = aws_lambda_function.project-notification.function_name
+ # principal     = "sns.amazonaws.com"
+ # source_arn    = aws_sns_topic.sns.arn
+#}
